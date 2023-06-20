@@ -2,6 +2,7 @@ package springframework.spring6restmvc.services;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import springframework.spring6restmvc.model.Beer;
 import springframework.spring6restmvc.model.BeerStyle;
 
@@ -57,6 +58,31 @@ public class BeerServiceImpl implements BeerService {
         beerMap.put(beer1.getId(), beer1);
         beerMap.put(beer2.getId(), beer2);
         beerMap.put(beer3.getId(), beer3);
+    }
+
+    @Override
+    public void patchBeerById(UUID beerId, Beer beer) {
+        Beer existing = beerMap.get(beerId);
+
+        if(StringUtils.hasText(beer.getBeerName())){
+            existing.setBeerName(beer.getBeerName());
+        }
+
+        if(beer.getBeerStyle() != null){
+            existing.setBeerStyle(beer.getBeerStyle());
+        }
+
+        if(beer.getPrice() != null){
+            existing.setPrice(beer.getPrice());
+        }
+
+        if(beer.getQuantityOnHand() != null){
+            existing.setQuantityOnHand(beer.getQuantityOnHand());
+        }
+
+        if(StringUtils.hasText(beer.getUpc())){
+            existing.setUpc(beer.getUpc());
+        }
     }
 
     @Override
