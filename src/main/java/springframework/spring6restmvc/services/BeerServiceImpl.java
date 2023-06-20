@@ -83,6 +83,7 @@ public class BeerServiceImpl implements BeerService {
         if(StringUtils.hasText(beer.getUpc())){
             existing.setUpc(beer.getUpc());
         }
+        existing.setUpdateDate(LocalDateTime.now());
     }
 
     @Override

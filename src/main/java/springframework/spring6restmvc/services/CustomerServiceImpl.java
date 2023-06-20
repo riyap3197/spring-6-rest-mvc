@@ -2,6 +2,7 @@ package springframework.spring6restmvc.services;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import springframework.spring6restmvc.model.Customer;
 
 import java.time.LocalDateTime;
@@ -42,6 +43,16 @@ public class CustomerServiceImpl implements CustomerService {
         customerMap.put(customer1.getId(), customer1);
         customerMap.put(customer2.getId(), customer2);
         customerMap.put(customer3.getId(), customer3);
+    }
+
+    @Override
+    public void patchCustomerById(UUID uuid, Customer customer) {
+        Customer existing = customerMap.get(uuid);
+
+        if(StringUtils.hasText(customer.getName())){
+            existing.setName(customer.getName());
+        }
+        existing.setUpdateDate(LocalDateTime.now());
     }
 
     @Override
