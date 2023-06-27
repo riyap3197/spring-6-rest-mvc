@@ -40,7 +40,7 @@ public class CustomerController {
     }
 
     @PostMapping(CUSTOMER_PATH)
-    private ResponseEntity handlePost(@RequestBody CustomerDTO customer){
+    public ResponseEntity handlePost(@RequestBody CustomerDTO customer){
         CustomerDTO savedCustomer = customerService.saveNewCustomer(customer);
         HttpHeaders headers =new HttpHeaders();
         headers.add("Location","/api/v1/customer/" + savedCustomer.getId().toString());
@@ -48,12 +48,12 @@ public class CustomerController {
     }
 
     @RequestMapping(CUSTOMER_PATH)
-    private List<CustomerDTO> listAllCustomers(){
+    public List<CustomerDTO> listAllCustomers(){
         return customerService.getAllCustomers();
     }
 
     @RequestMapping(CUSTOMER_PATH_ID)
-    private CustomerDTO getCustomerById(@PathVariable("customerId") UUID uuid){
+    public CustomerDTO getCustomerById(@PathVariable("customerId") UUID uuid){
         return customerService.getCustomerById(uuid).orElseThrow(NotFoundException::new);
     }
 
