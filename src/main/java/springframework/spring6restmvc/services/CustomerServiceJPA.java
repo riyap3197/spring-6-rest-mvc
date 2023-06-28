@@ -3,6 +3,7 @@ package springframework.spring6restmvc.services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import springframework.spring6restmvc.mappers.CustomerMapper;
 import springframework.spring6restmvc.model.CustomerDTO;
 import springframework.spring6restmvc.repositories.CustomerRepository;
@@ -10,6 +11,7 @@ import springframework.spring6restmvc.repositories.CustomerRepository;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,21 +38,48 @@ public class CustomerServiceJPA implements CustomerService {
 
     @Override
     public CustomerDTO saveNewCustomer(CustomerDTO customer) {
-        return null;
+        return customerMapper.customerToCustomerDto(customerRepository
+                .save(customerMapper.customerDtoToCustomer(customer)));
     }
 
     @Override
-    public void updateCustomerById(UUID uuid, CustomerDTO customer) {
+    public Optional<CustomerDTO> updateCustomerById(UUID uuid, CustomerDTO customer) {
+        AtomicReference<Optional<CustomerDTO>> atomicReference = new AtomicReference<>();
 
+        customerRepository.findById(uuid).ifPresentOrElse(foundCustomer -> {
+            foundCustomer.setName(customer.getName());
+            atomicReference.set(Optional.of(customerMapper
+                    .customerToCustomerDto(customerRepository.save(foundCustomer))));
+        }, () -> {
+            atomicReference.set(Optional.empty());
+        });
+
+        return atomicReference.get();
     }
 
     @Override
-    public void deleteCustomerById(UUID uuid) {
-
+    public Boolean deleteCustomerById(UUID uuid) {
+        if(customerRepository.existsById(uuid)){
+           customerRepository.deleteById(uuid);
+           return true;
+        }
+        return false;
     }
 
     @Override
-    public void patchCustomerById(UUID uuid, CustomerDTO customer) {
+    public Optional<CustomerDTO> patchCustomerById(UUID uuid, CustomerDTO customer) {
+        AtomicReference<Optional<CustomerDTO>> atomicReference = new AtomicReference<>();
 
+        customerRepository.findById(uuid).ifPresentOrElse(foundCustomer -> {
+            if(StringUtils.hasText(customer.getName())){
+                foundCustomer.setName(customer.getName());
+            }
+            atomicReference.set(Optional.of(customerMapper
+                    .customerToCustomerDto(customerRepository.save(foundCustomer))));
+        }, () -> {
+            atomicReference.set(Optional.empty());
+        });
+
+        return atomicReference.get();
     }
 }
