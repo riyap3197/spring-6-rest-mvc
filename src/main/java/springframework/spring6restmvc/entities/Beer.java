@@ -14,6 +14,7 @@ import springframework.spring6restmvc.model.BeerStyle;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -49,6 +50,9 @@ public class Beer {
     private String upc;
     private Integer quantityOnHand;
     private BigDecimal price;
+
+    @OneToMany(mappedBy = "beer")
+    private Set<BeerOrderLine> beerOrderLines;
 
     @CreationTimestamp
     private LocalDateTime createdDate;
